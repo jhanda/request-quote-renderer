@@ -1,7 +1,6 @@
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
-	ResourceBundle resourceBundle = PortalUtil.getResourceBundle(locale);
 	CPContentHelper cpContentHelper = (CPContentHelper)request.getAttribute(CPContentWebKeys.CP_CONTENT_HELPER);
 	RequestQuoteRendererConfiguration requestQuoteRendererConfiguration = (RequestQuoteRendererConfiguration) GetterUtil.getObject(request.getAttribute(RequestQuoteRendererConfiguration.class.getName()));
 	CommerceContext commerceContext = (CommerceContext)request.getAttribute(CommerceWebKeys.COMMERCE_CONTEXT);
@@ -44,8 +43,7 @@
 		<div class="col-md-6 col-xs-12">
 			<header class="product-header">
 				<commerce-ui:compare-checkbox
-						componentId="compareCheckbox"
-						CPDefinitionId="<%= cpDefinitionId %>"
+						CPCatalogEntry="<%= cpCatalogEntry %>"
 				/>
 
 				<h3 class="product-header-tagline" data-text-cp-instance-sku>
@@ -113,8 +111,7 @@
 				<c:otherwise>
 					<h2 class="commerce-price mt-3" data-text-cp-instance-price>
 						<commerce-ui:price
-								CPDefinitionId="<%= cpCatalogEntry.getCPDefinitionId() %>"
-								CPInstanceId="<%= (cpSku == null) ? 0 : cpSku.getCPInstanceId() %>"
+								CPCatalogEntry="<%= cpCatalogEntry %>"
 						/>
 					</h2>
 
@@ -126,10 +123,12 @@
 					</c:if>
 
 					<div class="mt-3 product-detail-actions">
-						<div class="autofit-col">
+						<div class="autofit-col"
+							 id="<%= addToCartId %>">
 							<commerce-ui:add-to-cart
-									CPInstanceId="<%= (cpSku == null) ? 0 : cpSku.getCPInstanceId() %>"
-									id="<%= addToCartId %>"
+									CPCatalogEntry="<%= cpCatalogEntry %>"
+									namespace="<%= liferayPortletResponse.getNamespace() %>"
+									options='<%= "[]" %>'
 							/>
 						</div>
 					</div>
@@ -139,95 +138,104 @@
 	</div>
 </div>
 
-
 <%
 	List<CPDefinitionSpecificationOptionValue> cpDefinitionSpecificationOptionValues = cpContentHelper.getCPDefinitionSpecificationOptionValues(cpDefinitionId);
 	List<CPOptionCategory> cpOptionCategories = cpContentHelper.getCPOptionCategories(company.getCompanyId());
 	List<CPMedia> cpAttachmentFileEntries = cpContentHelper.getCPAttachmentFileEntries(cpDefinitionId, themeDisplay);
 %>
 
+<c:if test="<%= cpContentHelper.hasCPDefinitionSpecificationOptionValues(cpDefinitionId) %>">
+	<commerce-ui:panel
+			elementClasses="flex-column mb-3"
+			title='<%= LanguageUtil.get(resourceBundle, "specifications") %>'
+	>
+		<dl class="specification-list">
 
-<div class="container">
-	<div class="row">
-		<div class="col-sm">
-				<commerce-ui:panel
-						elementClasses="mb-3"
-						title='Specifications'
-				>
-					<dl class="specification-list">
+			<%
+				for (CPDefinitionSpecificationOptionValue cpDefinitionSpecificationOptionValue : cpDefinitionSpecificationOptionValues) {
+					CPSpecificationOption cpSpecificationOption = cpDefinitionSpecificationOptionValue.getCPSpecificationOption();
+			%>
 
-						<%
-							List<String> isoCertifications = new ArrayList<>();
-							for (CPDefinitionSpecificationOptionValue descriptiveItem : cpDefinitionSpecificationOptionValues) {
-								CPSpecificationOption cpSpecificationOption = descriptiveItem.getCPSpecificationOption();
-								if (cpSpecificationOption.getTitle(languageId).equalsIgnoreCase("ISO Certification")) {
-									isoCertifications.add(descriptiveItem.getValue(languageId));
-									continue;
-								}
-						%>
+			<dt class="specification-term">
+				<%= HtmlUtil.escape(cpSpecificationOption.getTitle(languageId)) %>
+			</dt>
+			<dd class="specification-desc">
+				<%= HtmlUtil.escape(cpDefinitionSpecificationOptionValue.getValue(languageId)) %>
+			</dd>
 
-						<dt class="specification-term">
-							<%= HtmlUtil.escape(cpSpecificationOption.getTitle(languageId)) %>
-						</dt>
-						<dd class="specification-desc">
-							<%= HtmlUtil.escape(descriptiveItem.getValue(languageId)) %>
-						</dd>
+			<%
+				}
 
-						<%
-							}
-							if (isoCertifications.size() > 0){
-						%>
+				for (CPOptionCategory cpOptionCategory : cpOptionCategories) {
+					List<CPDefinitionSpecificationOptionValue> categorizedCPDefinitionSpecificationOptionValues = cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues(cpDefinitionId, cpOptionCategory.getCPOptionCategoryId());
+			%>
 
-						<dt class="specification-term">
-							ISO Certifications
-						</dt>
-						<dd class="specification-desc">
-							<%= HtmlUtil.escape(isoCertifications.toString().replace("[", "").replace("]","")) %>
-						</dd>
+			<c:if test="<%= !categorizedCPDefinitionSpecificationOptionValues.isEmpty() %>">
 
-						<%
-							}
-						%>
+				<%
+					for (CPDefinitionSpecificationOptionValue cpDefinitionSpecificationOptionValue : categorizedCPDefinitionSpecificationOptionValues) {
+						CPSpecificationOption cpSpecificationOption = cpDefinitionSpecificationOptionValue.getCPSpecificationOption();
+				%>
 
-					</dl>
-				</commerce-ui:panel>
-		</div>
-		<div class="col-sm">
-			<c:if test="<%= !cpAttachmentFileEntries.isEmpty() %>">
-				<commerce-ui:panel
-						elementClasses="mb-3"
-						title='Documents'
-				>
-					<dl class="specification-list">
+				<dt class="specification-term">
+					<%= HtmlUtil.escape(cpSpecificationOption.getTitle(languageId)) %>
+				</dt>
+				<dd class="specification-desc">
+					<%= HtmlUtil.escape(cpDefinitionSpecificationOptionValue.getValue(languageId)) %>
+				</dd>
 
-						<%
-							int attachmentsCount = 0;
-							for (CPMedia curCPAttachmentFileEntry : cpAttachmentFileEntries) {
-						%>
+				<%
+					}
+				%>
 
-						<dt class="specification-term">
-							<%= HtmlUtil.escape(curCPAttachmentFileEntry.getTitle()) %>
-						</dt>
-						<dd class="specification-desc">
-							<aui:icon cssClass="icon-monospaced" image="download" markupView="lexicon" target="_blank" url="<%= curCPAttachmentFileEntry.getDownloadUrl() %>" />
-						</dd>
-
-						<%
-							attachmentsCount = attachmentsCount + 1;
-							if (attachmentsCount >= 2) {
-						%>
-
-						<dt class="specification-empty specification-term"></dt>
-						<dd class="specification-desc specification-empty"></dd>
-
-						<%
-									attachmentsCount = 0;
-								}
-							}
-						%>
-					</dl>
-				</commerce-ui:panel>
 			</c:if>
-		</div>
-	</div>
-</div>
+
+			<%
+				}
+			%>
+
+		</dl>
+	</commerce-ui:panel>
+</c:if>
+
+<c:if test="<%= !cpAttachmentFileEntries.isEmpty() %>">
+	<commerce-ui:panel
+			elementClasses="mb-3"
+			title='<%= LanguageUtil.get(resourceBundle, "attachments") %>'
+	>
+		<dl class="specification-list">
+
+			<%
+				int attachmentsCount = 0;
+
+				for (CPMedia curCPAttachmentFileEntry : cpAttachmentFileEntries) {
+			%>
+
+			<dt class="specification-term">
+				<%= HtmlUtil.escape(curCPAttachmentFileEntry.getTitle()) %>
+			</dt>
+			<dd class="specification-desc">
+				<aui:icon cssClass="icon-monospaced" image="download" markupView="lexicon" target="_blank" url="<%= curCPAttachmentFileEntry.getDownloadURL() %>" />
+			</dd>
+
+			<%
+				attachmentsCount = attachmentsCount + 1;
+			%>
+
+			<c:if test="<%= attachmentsCount >= 2 %>">
+				<dt class="specification-empty specification-term"></dt>
+				<dd class="specification-desc specification-empty"></dd>
+
+				<%
+					attachmentsCount = 0;
+				%>
+
+			</c:if>
+
+			<%
+				}
+			%>
+
+		</dl>
+	</commerce-ui:panel>
+</c:if>

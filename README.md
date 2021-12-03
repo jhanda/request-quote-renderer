@@ -15,11 +15,12 @@ Bid*.  Configuration can be found under System Settings > Other > Request Quote 
 
 ## Requirements
 
-- Liferay Commerce 3.0.0
+- Liferay Commerce 4.0.0
 
+For Liferay Commerce 3.0.0 use [7.3-3.0 branch](https://github.com/jhanda/request-quote-renderer/tree/7.3-3.0)
 ## Installation
 
-- Download the `.jar` file in [releases](https://github.com/jhanda/request-quote-renderer/releases/tag/1.0.0) and 
+- Download the `.jar` file in [releases](https://github.com/jhanda/request-quote-renderer/releases/tag/4.0.0) and 
 deploy it into Liferay.
 
 or

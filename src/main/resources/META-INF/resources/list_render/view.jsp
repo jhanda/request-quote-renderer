@@ -125,8 +125,7 @@
                                         <c:otherwise>
                                             <div id="<%= addToCartId %>">
                                                 <commerce-ui:add-to-cart
-                                                        block="<%= true %>"
-                                                        CPCatalogEntry="<%= cpCatalogEntry %>"
+=                                                        CPCatalogEntry="<%= cpCatalogEntry %>"
                                                 />
                                             </div>
                                         </c:otherwise>

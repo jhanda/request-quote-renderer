@@ -1,26 +1,20 @@
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
-    CPContentHelper cpContentHelper = (CPContentHelper) request.getAttribute(
-            CPContentWebKeys.CP_CONTENT_HELPER);
-    CPDataSourceResult cpDataSourceResult = (CPDataSourceResult) request.getAttribute(
-            CPWebKeys.CP_DATA_SOURCE_RESULT);
-
+    CPContentHelper cpContentHelper = (CPContentHelper) request.getAttribute(CPContentWebKeys.CP_CONTENT_HELPER);
+    CPDataSourceResult cpDataSourceResult = (CPDataSourceResult) request.getAttribute(CPWebKeys.CP_DATA_SOURCE_RESULT);
 %>
 
 <c:choose>
     <c:when test="<%= !cpDataSourceResult.getCPCatalogEntries().isEmpty() %>">
-
         <div class="product-card-tiles">
-
             <%
                 for (CPCatalogEntry cpCatalogEntry : cpDataSourceResult.getCPCatalogEntries()) {
                     CPSku cpSku = cpContentHelper.getDefaultCPSku(cpCatalogEntry);
                     String addToCartId = PortalUtil.generateRandomKey(request, "add-to-cart");
-                    String productDetailURL = cpContentHelper.getFriendlyURL(cpCatalogEntry,
-                                                                             themeDisplay);
-                    RequestQuoteRendererConfiguration requestQuoteRendererConfiguration = (RequestQuoteRendererConfiguration) GetterUtil.getObject(
-                            request.getAttribute(
+                    String productDetailURL = cpContentHelper.getFriendlyURL(cpCatalogEntry, themeDisplay);
+                    RequestQuoteRendererConfiguration requestQuoteRendererConfiguration =
+                            (RequestQuoteRendererConfiguration) GetterUtil.getObject(request.getAttribute(
                                     RequestQuoteRendererConfiguration.class.getName()));
                     boolean isPublic = themeDisplay.getLayout().isPublicLayout();
                     String groupName = themeDisplay.getSiteGroupName().toLowerCase();
@@ -125,8 +119,7 @@
                                         <c:otherwise>
                                             <div id="<%= addToCartId %>">
                                                 <commerce-ui:add-to-cart
-                                                        block="<%= true %>"
-                                                        CPCatalogEntry="<%= cpCatalogEntry %>"
+=                                                        CPCatalogEntry="<%= cpCatalogEntry %>"
                                                 />
                                             </div>
                                         </c:otherwise>
@@ -159,13 +152,10 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
             <%
                 }
             %>
-
         </div>
     </c:when>
     <c:otherwise>

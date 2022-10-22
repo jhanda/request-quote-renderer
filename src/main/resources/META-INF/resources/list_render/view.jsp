@@ -118,9 +118,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <div id="<%= addToCartId %>">
-                                                <commerce-ui:add-to-cart
-=                                                        CPCatalogEntry="<%= cpCatalogEntry %>"
-                                                />
+                                                <commerce-ui:add-to-cart CPCatalogEntry="<%= cpCatalogEntry %>"/>
                                             </div>
                                         </c:otherwise>
                                     </c:choose>

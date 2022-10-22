@@ -128,7 +128,7 @@
 							<commerce-ui:add-to-cart
 									CPCatalogEntry="<%= cpCatalogEntry %>"
 									namespace="<%= liferayPortletResponse.getNamespace() %>"
-									options='<%= "[]" %>'
+									skuOptions='<%= "[]" %>'
 							/>
 						</div>
 					</div>
@@ -141,7 +141,7 @@
 <%
 	List<CPDefinitionSpecificationOptionValue> cpDefinitionSpecificationOptionValues = cpContentHelper.getCPDefinitionSpecificationOptionValues(cpDefinitionId);
 	List<CPOptionCategory> cpOptionCategories = cpContentHelper.getCPOptionCategories(company.getCompanyId());
-	List<CPMedia> cpAttachmentFileEntries = cpContentHelper.getCPAttachmentFileEntries(cpDefinitionId, themeDisplay);
+	List<CPMedia> cpAttachmentFileEntries = cpContentHelper.getCPMedias(cpDefinitionId, themeDisplay);
 %>
 
 <c:if test="<%= cpContentHelper.hasCPDefinitionSpecificationOptionValues(cpDefinitionId) %>">

@@ -17,14 +17,15 @@
                             (RequestQuoteRendererConfiguration) GetterUtil.getObject(request.getAttribute(
                                     RequestQuoteRendererConfiguration.class.getName()));
                     boolean isPublic = themeDisplay.getLayout().isPublicLayout();
-                    String groupName = themeDisplay.getSiteGroupName().toLowerCase();
                     String requestQuotePage = requestQuoteRendererConfiguration.requestQuotePage();
-                    String requestQuoteUrl = "";
-                    if (isPublic) {
-                        requestQuoteUrl = "/web/" + groupName + "/" + requestQuotePage;
-                    } else {
-                        requestQuoteUrl = "/group/" + groupName + "/" + requestQuotePage;
-                    }
+					String requestQuoteUrl = null;
+					if (isPublic){
+						requestQuoteUrl = themeDisplay.getPathFriendlyURLPublic();
+					}else{
+						requestQuoteUrl = themeDisplay.getPathFriendlyURLPrivateGroup();
+					}
+					requestQuoteUrl = requestQuoteUrl + themeDisplay.getSiteGroup().getFriendlyURL() + "/" + requestQuotePage;
+
                     String requestQuoteCaption = requestQuoteRendererConfiguration.requestQuoteCaption();
                     CommerceContext commerceContext = (CommerceContext) request.getAttribute(
                             CommerceWebKeys.COMMERCE_CONTEXT);

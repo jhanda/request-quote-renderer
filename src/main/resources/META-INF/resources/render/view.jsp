@@ -5,14 +5,14 @@
 	RequestQuoteRendererConfiguration requestQuoteRendererConfiguration = (RequestQuoteRendererConfiguration) GetterUtil.getObject(request.getAttribute(RequestQuoteRendererConfiguration.class.getName()));
 	CommerceContext commerceContext = (CommerceContext)request.getAttribute(CommerceWebKeys.COMMERCE_CONTEXT);
 	boolean isPublic = themeDisplay.getLayout().isPublicLayout();
-	String groupName = themeDisplay.getSiteGroupName().toLowerCase();
 	String requestQuotePage = requestQuoteRendererConfiguration.requestQuotePage();
-	String requestQuoteUrl ="";
+	String requestQuoteUrl = null;
 	if (isPublic){
-		requestQuoteUrl = "/web/" + groupName + "/" + requestQuotePage;
+		requestQuoteUrl = themeDisplay.getPathFriendlyURLPublic();
 	}else{
-		requestQuoteUrl = "/group/" + groupName + "/" + requestQuotePage;
+		requestQuoteUrl = themeDisplay.getPathFriendlyURLPrivateGroup();
 	}
+	requestQuoteUrl = requestQuoteUrl + themeDisplay.getSiteGroup().getFriendlyURL() + "/" + requestQuotePage;
 
 	String requestQuoteCaption = requestQuoteRendererConfiguration.requestQuoteCaption();
 
